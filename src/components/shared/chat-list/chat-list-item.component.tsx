@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo } from 'react';
 
-import { Flex, List, Skeleton } from 'antd';
+import { Badge, Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.svg';
@@ -31,12 +31,14 @@ interface ContactListItemProps {
   lastMessage: MessageInterface;
   onNameExtracted?: (chatId: string, name: string) => void;
   showDescription?: boolean;
+  unreadCount?: number;
 }
 
 const ChatListItem: FC<ContactListItemProps> = ({
   lastMessage,
   onNameExtracted,
   showDescription = true,
+  unreadCount = 0,
 }) => {
   const {
     t,
@@ -196,7 +198,26 @@ const ChatListItem: FC<ContactListItemProps> = ({
           }
         />
         {showDescription && (
-          <span style={{ textAlign: 'end', alignSelf: 'start' }}>{messageDate}</span>
+          <Flex
+            vertical
+            align="flex-end"
+            justify="space-between"
+            style={{ alignSelf: 'stretch', minHeight: 48 }}
+          >
+            <span style={{ textAlign: 'end' }}>{messageDate}</span>
+            {unreadCount > 0 && (
+              <Badge
+                count={unreadCount}
+                style={{
+                  backgroundColor: 'red',
+                  fontSize: 12,
+                  minWidth: 20,
+                  height: 20,
+                  lineHeight: '20px',
+                }}
+              />
+            )}
+          </Flex>
         )}
       </Skeleton>
     </List.Item>

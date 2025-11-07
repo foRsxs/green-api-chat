@@ -47,6 +47,7 @@ export const {
   useLogoutMutation,
   useLazyGetStateInstanceQuery,
   useDownloadFileMutation,
+  useReadChatMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { listenerMiddleware } from './auth-middleware';
 import { qrInstructionReducer } from './slices/qr-instruction.slice';
 import { appAPI } from 'services/app/app.service';
+import { eosChatAPI } from 'services/eos-chat';
 import { greenAPI } from 'services/green-api/green-api.service';
 import chatReducer from 'store/slices/chat.slice';
 import instancesReducer from 'store/slices/instances.slice';
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   qrInstructionReducer,
   [appAPI.reducerPath]: appAPI.reducer,
   [greenAPI.reducerPath]: greenAPI.reducer,
+  [eosChatAPI.reducerPath]: eosChatAPI.reducer,
 });
 
 export const setupStore = (preloadedState?: RootState) =>
@@ -28,7 +30,8 @@ export const setupStore = (preloadedState?: RootState) =>
       getDefaultMiddleware().concat(
         listenerMiddleware.middleware,
         appAPI.middleware,
-        greenAPI.middleware
+        greenAPI.middleware,
+        eosChatAPI.middleware
       ),
     preloadedState,
   });

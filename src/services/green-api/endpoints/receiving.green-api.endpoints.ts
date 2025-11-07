@@ -6,6 +6,7 @@ import {
   ResultResponseInterface,
   DownloadFileResponseInterface,
   GetChatInformationParameters,
+  RequestWithChatIdParameters,
 } from 'types';
 
 export const receivingGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -26,6 +27,13 @@ export const receivingGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/downloadFile/${apiTokenInstance}`,
         method: 'POST',
         body,
+      }),
+    }),
+    readChat: builder.mutation<ResultResponseInterface, RequestWithChatIdParameters>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, chatId }) => ({
+        url: `${apiUrl}waInstance${idInstance}/readChat/${apiTokenInstance}`,
+        method: 'POST',
+        body: { chatId },
       }),
     }),
   }),

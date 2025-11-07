@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Alert, Button, Empty, Spin } from 'antd';
+import { Alert, Badge, Button, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
@@ -8,6 +8,7 @@ import LeftGroupAlert from 'components/alerts/left-group-alert.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetProfileSettingsQuery } from 'services/app/endpoints';
+import { useGetUnreadMessagesQuery, useMarkAsReadMutation } from 'services/eos-chat';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -37,6 +38,19 @@ const ChatView: FC = () => {
   const [count, setCount] = useState(50);
   const { setMessageCount } = useActions();
   const isMax = useIsMaxInstance();
+
+  const [markAsRead, { isLoading: isReadingChat }] = useMarkAsReadMutation();
+
+  // Получение количества непрочитанных сообщений
+  const { data: unreadData } = useGetUnreadMessagesQuery(
+    { idInstance: instanceCredentials.idInstance },
+    {
+      skip: !instanceCredentials?.idInstance,
+      pollingInterval: 10000,
+    }
+  );
+
+  const unreadCount = unreadData?.[activeChat.chatId] || 0;
 
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
@@ -122,6 +136,17 @@ const ChatView: FC = () => {
 
   const loaderVisible = !isMiniVersion && isFetching;
 
+  const handleReadChat = async () => {
+    try {
+      await markAsRead({
+        idInstance: instanceCredentials.idInstance,
+        chatId: activeChat.chatId,
+      }).unwrap();
+    } catch (error) {
+      console.error('Failed to mark chat as read:', error);
+    }
+  };
+
   const formattedMessages = useMemo(() => {
     if (!messages) return [];
 
@@ -164,6 +189,16 @@ const ChatView: FC = () => {
 
     return processedMessages;
   }, [messages, resolvedLanguage]);
+
+  // Скролл вниз при открытии нового чата и загрузке сообщений
+  useEffect(() => {
+    const element = chatViewRef.current;
+    if (element && !isLoading && formattedMessages.length > 0 && !scrollPositionRef.current) {
+      setTimeout(() => {
+        element.scrollTo({ top: element.scrollHeight, behavior: 'instant' });
+      }, 50);
+    }
+  }, [activeChat.chatId, isLoading, formattedMessages.length]);
 
   if (isLoading || templatesLoading) {
     return (
@@ -344,6 +379,53 @@ const ChatView: FC = () => {
 
       {activeChat.contactInfo === (isMax ? 'groupId not found' : 'Error:forbiden') && (
         <LeftGroupAlert />
+      )}
+
+      {!isMiniVersion && unreadCount > 0 && (
+        <div style={{ padding: '12px 16px', textAlign: 'center', borderTop: '1px solid #e8e8e8' }}>
+          <style>{`
+            .mark-as-read-btn {
+              transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+            }
+            .mark-as-read-btn:hover:not(:disabled) {
+              background-color: #ff5722 !important;
+              color: #fff !important;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4) !important;
+            }
+            .mark-as-read-btn:active:not(:disabled) {
+              transform: translateY(0);
+            }
+          `}</style>
+          <Button
+            className="mark-as-read-btn"
+            onClick={handleReadChat}
+            loading={isReadingChat}
+            style={{
+              borderRadius: '24px',
+              padding: '8px 24px',
+              height: 'auto',
+              fontSize: '14px',
+              fontWeight: 500,
+              border: '2px solid #ff5722',
+              color: '#ff5722',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            {t('MARK_AS_READ')}
+            <Badge
+              count={unreadCount}
+              style={{
+                backgroundColor: '#ff4d4f',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                boxShadow: 'none',
+              }}
+            />
+          </Button>
+        </div>
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ChatListItem from './chat-list-item.component';
 import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
+import { useGetUnreadMessagesQuery } from 'services/eos-chat';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -29,6 +30,15 @@ const ChatList: FC = () => {
       skipPollingIfUnfocused: true,
       pollingInterval: isMiniVersion ? 17000 : 15000,
       skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
+    }
+  );
+
+  // Получение данных о непрочитанных сообщениях
+  const { data: unreadData } = useGetUnreadMessagesQuery(
+    { idInstance: instanceCredentials.idInstance },
+    {
+      skip: !instanceCredentials?.idInstance,
+      pollingInterval: 10000, // Обновление каждые 10 секунд
     }
   );
 
@@ -169,6 +179,7 @@ const ChatList: FC = () => {
                       lastMessage={msg}
                       onNameExtracted={handleNameExtracted}
                       showDescription={false}
+                      unreadCount={unreadData?.[msg.chatId] || 0}
                     />
                   )}
                   split={false}
@@ -188,6 +199,7 @@ const ChatList: FC = () => {
                       key={`${msg.chatId}-${msg.idMessage}`}
                       lastMessage={msg}
                       onNameExtracted={handleNameExtracted}
+                      unreadCount={unreadData?.[msg.chatId] || 0}
                     />
                   )}
                   split={false}
@@ -210,6 +222,7 @@ const ChatList: FC = () => {
                 key={message.chatId}
                 lastMessage={message}
                 onNameExtracted={handleNameExtracted}
+                unreadCount={unreadData?.[message.chatId] || 0}
               />
             )}
             loading={{
