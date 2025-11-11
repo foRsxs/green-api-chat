@@ -37,20 +37,20 @@ jobs:
         env:
           VITE_APP_API_URL: ${{ secrets.VITE_APP_API_URL }}
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      - name: Add host to known_hosts
+      - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
 
       - name: Deploy via rsync
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -az --delete \
+          rsync -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            -az --delete \
             --exclude='.git' \
             --exclude='.well-known' \
             dist/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
       - name: Post-deploy check
-        run: sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la '$DEPLOY_PATH/index.html' && echo 'Deployed OK'"
+        run: ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no "$DEPLOY_USER@$DEPLOY_HOST" "ls -la '$DEPLOY_PATH/index.html' && echo 'Deployed OK'"
