@@ -283,3 +283,4 @@ http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl
 ## 📄 Лицензия
 
 Лицензия MIT
+test deploy commit
