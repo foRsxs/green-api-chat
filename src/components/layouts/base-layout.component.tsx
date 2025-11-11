@@ -197,7 +197,7 @@ const BaseLayout: FC = () => {
               if (data && data !== 'Error: item-not-found') groupInfo = data;
               error = groupDataError;
 
-              /*const { data: avatarData } = await getAvatar({
+              const { data: avatarData } = await getAvatar({
                 chatId,
                 apiUrl: apiUrl + '/',
                 mediaUrl: mediaUrl + '/',
@@ -208,7 +208,7 @@ const BaseLayout: FC = () => {
               if (avatarData) {
                 avatar = avatarData.urlAvatar;
                 if (!avatarData.available && !chatId.includes('g.us')) avatar = emptyAvatar;
-              }*/
+              }
             }
 
             if (!chatId.includes('g.us') && !idInstance.toString().startsWith('7835')) {
