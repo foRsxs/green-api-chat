@@ -207,5 +207,7 @@
   "DOWNLOAD": "הורדה",
   "DOWNLOAD_ERROR": "אירעה שגיאה בעת הורדת הקובץ",
   "UNABLE_TO_DISPLAY_MESSAGE": "לא ניתן להציג את ההודעה",
+  "LANGUAGE": "שפה",
+  "AUTHORIZE": "לאשר",
   "MARK_AS_READ": "סמן כנקרא"
 }
