@@ -212,6 +212,8 @@ export interface MessageDataInit {
       tariff: TariffsEnum;
       typeInstance: TypeInstance;
       instanceList: ExpandedInstanceInterface[];
+      brandDescription?: string;
+      logo?: string;
     };
 }
 
