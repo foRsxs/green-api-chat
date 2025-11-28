@@ -67,6 +67,7 @@ const BaseLayout: FC = () => {
         case MessageEventTypeEnum.INIT:
           if (event.data.payload) {
             let isChatWorking: boolean | null = null;
+            console.log('INIT payload:', event.data.payload);
 
             if (
               event.data.payload.idInstance &&
@@ -102,8 +103,11 @@ const BaseLayout: FC = () => {
 
             event.data.payload.brandDescription &&
               setBrandData({ description: event.data.payload.brandDescription });
-            event.data.payload.logo &&
+
+            console.log("INIT logo:", event.data.payload.logo);
+            if ('logo' in event.data.payload) {
               setBrandData({ brandImageUrl: event.data.payload.logo });
+            }
 
             return i18n.changeLanguage(event.data.payload.locale);
           }
@@ -175,6 +179,7 @@ const BaseLayout: FC = () => {
 
       language && i18n.changeLanguage(language);
       brandDescription && setBrandData({ description: brandDescription });
+      console.log('URL logo:', brandImageUrl);
       brandImageUrl && setBrandData({ brandImageUrl });
 
       if (searchParams.has('chatId')) {
