@@ -100,11 +100,11 @@ const BaseLayout: FC = () => {
             setPlatform(event.data.payload.platform);
             setTheme(event.data.payload.theme);
 
-            event.data.payload.brandDescription &&
-              setBrandData({ description: event.data.payload.brandDescription });
-
-            if ('logo' in event.data.payload) {
-              setBrandData({ brandImageUrl: event.data.payload.logo });
+            if (event.data.payload.brandDescription && event.data.payload.logo) {
+              setBrandData({
+                brandImageUrl: event.data.payload.logo,
+                description: event.data.payload.brandDescription,
+              });
             }
 
             return i18n.changeLanguage(event.data.payload.locale);
