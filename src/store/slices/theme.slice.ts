@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { Themes } from 'types';
+import { MessageEventTypeEnum, Themes } from 'types';
 import { isPageInIframe } from 'utils';
 
 function getInitialState() {
@@ -31,6 +31,16 @@ const themeSlice = createSlice({
       state = action.payload;
 
       localStorage.setItem('theme', action.payload);
+
+      window.parent.postMessage(
+        {
+          type: MessageEventTypeEnum.SET_THEME,
+          payload: {
+            theme: action.payload,
+          },
+        },
+        '*'
+      );
 
       return state;
     },
