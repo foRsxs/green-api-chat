@@ -140,6 +140,7 @@ const ChatView: FC = () => {
     try {
       await markAsRead({
         idInstance: instanceCredentials.idInstance,
+        apiTokenInstance: instanceCredentials.apiTokenInstance,
         chatId: activeChat.chatId,
       }).unwrap();
     } catch (error) {
