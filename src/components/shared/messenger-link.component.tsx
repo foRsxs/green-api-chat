@@ -14,7 +14,7 @@ const MessengerLink = () => {
 
   return (
     <Space align="center" size="small">
-      <span className="link link-scale">
+      {/*<span className="link link-scale">
         <Typography.Link
           style={{ color: 'inherit', fontSize: 12 }}
           href={
@@ -76,7 +76,7 @@ const MessengerLink = () => {
         rel="noreferrer"
       >
         <YoutubeFilled style={{ fontSize: 19 }} />
-      </a>
+      </a>*/}
     </Space>
   );
 };

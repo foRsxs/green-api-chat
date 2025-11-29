@@ -20,7 +20,7 @@ import {
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
+import { MessageData, MessageEventTypeEnum, TariffsEnum, Themes } from 'types';
 import {
   isAuth,
   isPartnerChat,
@@ -67,7 +67,6 @@ const BaseLayout: FC = () => {
         case MessageEventTypeEnum.INIT:
           if (event.data.payload) {
             let isChatWorking: boolean | null = null;
-            console.log('INIT payload:', event.data.payload);
 
             if (
               event.data.payload.idInstance &&
@@ -104,7 +103,6 @@ const BaseLayout: FC = () => {
             event.data.payload.brandDescription &&
               setBrandData({ description: event.data.payload.brandDescription });
 
-            console.log("INIT logo:", event.data.payload.logo);
             if ('logo' in event.data.payload) {
               setBrandData({ brandImageUrl: event.data.payload.logo });
             }
@@ -166,6 +164,7 @@ const BaseLayout: FC = () => {
       const language = searchParams.get('lng');
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');
+      const themeParam = searchParams.get('theme');
 
       setType('partner-iframe');
       setSelectedInstance({
@@ -179,8 +178,10 @@ const BaseLayout: FC = () => {
 
       language && i18n.changeLanguage(language);
       brandDescription && setBrandData({ description: brandDescription });
-      console.log('URL logo:', brandImageUrl);
       brandImageUrl && setBrandData({ brandImageUrl });
+      if (themeParam) {
+        setTheme(themeParam as Themes);
+      }
 
       if (searchParams.has('chatId')) {
         setType('one-chat-only');
