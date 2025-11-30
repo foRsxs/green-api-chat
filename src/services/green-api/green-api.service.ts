@@ -43,7 +43,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
     minutes = getIsMiniVersion(type) ? 1440 : 20160;
 
     if (type === 'partner-iframe') {
-      minutes = 12080;
+      minutes = 4320;
     }
   }
 
